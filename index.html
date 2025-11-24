@@ -220,65 +220,64 @@
 
   <div class="floating-icons icon1">🚛</div>
   <div class="floating-icons icon2">📍</div>
+<script>
+  async function sendMessage() {
+    const userMsg = document.getElementById("userMessage").value.trim();
+    const chatHistory = document.getElementById("chatHistory");
 
-  <script>
-    async function sendMessage() {
-      const userMsg = document.getElementById("userMessage").value.trim();
-      const chatHistory = document.getElementById("chatHistory");
-
-      if (!userMsg) {
-        alert("Please enter a message.");
-        return;
-      }
-
-      // Add user message to chat history
-      const userDiv = document.createElement("div");
-      userDiv.className = "message user-message";
-      userDiv.textContent = `You: ${userMsg}`;
-      chatHistory.appendChild(userDiv);
-      chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
-
-      // Clear textarea
-      document.getElementById("userMessage").value = "";
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message: userMsg })
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        const aiResponse = data.response;
-
-        // Add AI response to chat history
-        const aiDiv = document.createElement("div");
-        aiDiv.className = "message ai-message";
-        aiDiv.textContent = `AI: ${aiResponse}`;
-        chatHistory.appendChild(aiDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
-      } catch (error) {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "message ai-message";
-        errorDiv.textContent = `AI: An error occurred: ${error.message}`;
-        chatHistory.appendChild(errorDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
-      }
+    if (!userMsg) {
+      alert("Please enter a message.");
+      return;
     }
 
-    // Allow Enter key to send message
-    document.getElementById("userMessage").addEventListener("keypress", function(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+    // Add user message to chat history
+    const userDiv = document.createElement("div");
+    userDiv.className = "message user-message";
+    userDiv.textContent = `You: ${userMsg}`;
+    chatHistory.appendChild(userDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    // Clear textarea
+    document.getElementById("userMessage").value = "";
+
+    try {
+      const response = await fetch("https://ai-chatbot-1-p2zm.onrender.com/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: userMsg })
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    });
-  </script>
+
+      const data = await response.json();
+      const aiResponse = data.response;
+
+      const aiDiv = document.createElement("div");
+      aiDiv.className = "message ai-message";
+      aiDiv.textContent = `AI: ${aiResponse}`;
+      chatHistory.appendChild(aiDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    } catch (error) {
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "message ai-message";
+      errorDiv.textContent = `AI: An error occurred: ${error.message}`;
+      chatHistory.appendChild(errorDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+  }
+
+  document.getElementById("userMessage").addEventListener("keypress", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+</script>
+
 </body>
 </html>
